@@ -78,6 +78,7 @@ export const createProduct = async (req, res, next) => {
       fetcher,
       images: urls,
       slug: slugify(name),
+      reviews: [],
     });
 
     await product.save();
@@ -99,6 +100,43 @@ export const createProduct = async (req, res, next) => {
       success: false,
       message: 'Product does not Create',
     });
+  }
+};
+
+// review at controller
+export const pushReview = async (req, res, next) => {
+  try {
+    const { user, rating, comment } = req.body;
+    const product = await Product.findById(req.params.id);
+    product.reviews.push({
+      user,
+      rating,
+      comment,
+    });
+    await product.save();
+    res.status(201).send({
+      success: true,
+      message: 'Thanks for your comment and rating.',
+      product,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const deleteReview = async (req, res) => {
+  try {
+    const { product_id, comment_id } = req.body;
+
+    await Product.updateOne(
+      { _id: product_id },
+      { $pull: { reviews: { _id: comment_id } } }
+    );
+    res.status(202).send({
+      success: true,
+      message: 'Review deleted',
+    });
+  } catch (error) {
+    console.log(error);
   }
 };
 

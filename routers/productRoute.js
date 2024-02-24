@@ -4,12 +4,14 @@ import {
   OrderCheckout,
   createProduct,
   deleteProduct,
+  deleteReview,
   getProducts,
   getSingleProduct,
   orderCheckoutWithoutPayment,
   paymentFail,
   paymentSuccess,
   productCategoryController,
+  pushReview,
   relatedProductController,
   updateProduct,
 } from '../controllers/productController.js';
@@ -25,6 +27,11 @@ productRouter.post(
   requiredSignIn,
   createProduct
 );
+
+// product review rout
+productRouter.post('/review/:id', requiredSignIn, pushReview);
+
+productRouter.post('/delete_review', requiredSignIn, deleteReview);
 
 //get all products
 productRouter.get('/get-all', getProducts);

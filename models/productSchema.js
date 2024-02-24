@@ -50,6 +50,13 @@ const productSchema = new Schema(
       type: String,
       required: true,
     },
+    reviews: [
+      {
+        user: String,
+        rating: Number,
+        comment: String,
+      },
+    ],
   },
   { timestamps: true }
 );
