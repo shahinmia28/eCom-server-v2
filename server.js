@@ -19,17 +19,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.send('বাংলা eCommerce server');
+  res.send('eCommerce server v2');
 });
 
 // routers
-
 app.use('/api/auth', authRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
 app.use('/api/other', otherRouter);
 
 app.listen(PORT, async () => {
-  console.log(`server is running at http://localhost:${PORT}`);
+  console.log(`Server is running at http://localhost:${PORT}`);
   await connectDB();
 });

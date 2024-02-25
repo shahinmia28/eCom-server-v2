@@ -53,6 +53,7 @@ const productSchema = new Schema(
     reviews: [
       {
         user: String,
+        user_image: String,
         rating: Number,
         comment: String,
       },

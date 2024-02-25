@@ -7,6 +7,7 @@ import Order from '../models/orderModel.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cloudinary from '../helpers/cloudinary.js';
+import User from '../models/userModel.js';
 dotenv.config();
 
 // create product
@@ -106,8 +107,11 @@ export const createProduct = async (req, res, next) => {
 // review at controller
 export const pushReview = async (req, res, next) => {
   try {
-    const { user, rating, comment } = req.body;
+    const { user, user_email, rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
+    const findUser = await User.findOne({ email: user_email });
+    console.log(findUser);
+
     product.reviews.push({
       user,
       rating,
