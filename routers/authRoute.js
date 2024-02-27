@@ -9,13 +9,16 @@ import {
   getAllOrdersController,
   orderStatusController,
   emailChange,
+  getAllUser,
 } from '../controllers/authController.js';
 import { isAdmin, requiredSignIn } from '../middleware/authMiddleware.js';
+import upload from '../helpers/multer.js';
 const authRouter = express.Router();
 
 // register user
 
 authRouter.post('/register', handleRegister);
+authRouter.get('/get-all', getAllUser);
 authRouter.post('/login', handleLogin);
 authRouter.post('/forget-password', handleForgetPassword);
 //protected user route auth
@@ -28,7 +31,12 @@ authRouter.get('/admin-auth', requiredSignIn, isAdmin, (req, res) => {
 });
 
 //update profile
-authRouter.put('/profile-update', requiredSignIn, updateProfileController);
+authRouter.put(
+  '/profile-update',
+  upload.array('image'),
+  requiredSignIn,
+  updateProfileController
+);
 authRouter.put('/password-update', requiredSignIn, updatePassword);
 authRouter.put('/email-change', requiredSignIn, emailChange);
 

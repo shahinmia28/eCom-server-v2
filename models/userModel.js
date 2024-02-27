@@ -47,10 +47,9 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
-    // images: {
-    //   type: Array,
-    //   required: true,
-    // },
+    image: {
+      type: Array,
+    },
   },
   { timestamps: true }
 );

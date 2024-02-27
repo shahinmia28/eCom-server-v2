@@ -2,6 +2,8 @@ import User from '../models/userModel.js';
 import Jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import Order from '../models/orderModel.js';
+import cloudinary from '../helpers/cloudinary.js';
+import fs from 'fs';
 
 export const handleRegister = async (req, res, next) => {
   try {
@@ -215,8 +217,33 @@ export const emailChange = async (req, res, next) => {
 //update profile
 export const updateProfileController = async (req, res) => {
   try {
-    const { name, email, address, phone } = req.body;
+    const { name, address, phone } = req.body;
+
     const user = await User.findById(req.user._id);
+
+    // image handling
+    const files = req.files;
+
+    const urls = files.length !== 0 ? [] : user.image;
+
+    if (files.length !== 0) {
+      // delete old images
+      for (const image of user.image) {
+        const { public_id } = image;
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      for (const file of files) {
+        const { path } = file;
+        const result = await cloudinary.uploader.upload(path);
+        const data = {
+          url: result.secure_url,
+          public_id: result.public_id,
+        };
+        urls.push(data);
+        fs.unlinkSync(path);
+      }
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
@@ -224,6 +251,7 @@ export const updateProfileController = async (req, res) => {
         name: name || user.name,
         phone: phone || user.phone,
         address: address || user.address,
+        image: urls,
       },
       { new: true }
     );
@@ -239,6 +267,16 @@ export const updateProfileController = async (req, res) => {
       message: 'Error WHile Update profile',
       error,
     });
+  }
+};
+// get all users
+
+export const getAllUser = async (req, res) => {
+  try {
+    const allUser = await User.find({}, { password: 0 });
+    res.status(200).json(allUser);
+  } catch (error) {
+    console.log(error);
   }
 };
 
